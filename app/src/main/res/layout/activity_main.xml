@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map" android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="10dp"
+        android:background="#DDFFFFFF">
+
+        <TextView android:id="@+id/status"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="STOPPED" android:textStyle="bold"/>
+
+        <TextView android:id="@+id/coords"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Lat: -6.200000   Lon: 106.816666"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <EditText android:id="@+id/lat" android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:hint="Latitude" android:inputType="numberDecimal|numberSigned"/>
+            <EditText android:id="@+id/lon" android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:hint="Longitude" android:inputType="numberDecimal|numberSigned"/>
+            <Button android:id="@+id/setPos" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="SET"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <SeekBar android:id="@+id/speed" android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:max="120" android:progress="20"/>
+            <TextView android:id="@+id/speedText" android:layout_width="70dp"
+                android:layout_height="wrap_content" android:text="20 km/h"
+                android:gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView android:id="@+id/routeInfo"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="top|end" android:layout_marginTop="150dp"
+        android:layout_marginEnd="10dp" android:padding="8dp"
+        android:background="#DD000000" android:textColor="#FFFFFF"
+        android:text="Route: 0"/>
+
+    <com.example.fakegpspro.JoystickView
+        android:id="@+id/joystick" android:layout_width="210dp"
+        android:layout_height="210dp" android:layout_gravity="bottom|start"
+        android:layout_margin="18dp"/>
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:orientation="vertical" android:layout_gravity="bottom|end"
+        android:layout_margin="12dp">
+        <Button android:id="@+id/add" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="+ WAYPOINT"/>
+        <Button android:id="@+id/buildRoute" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="BUILD ROUTE"/>
+        <Button android:id="@+id/start" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="▶ START AUTO"/>
+        <Button android:id="@+id/manual" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="🎮 MANUAL"/>
+        <Button android:id="@+id/clear" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="CLEAR"/>
+    </LinearLayout>
+</FrameLayout>
