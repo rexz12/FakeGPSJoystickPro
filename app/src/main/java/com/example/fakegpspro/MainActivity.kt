@@ -67,7 +67,7 @@ class MainActivity : Activity() {
         )
 
         Configuration.getInstance().userAgentValue =
-            "FakeGPSJoystickPro/3.1"
+            "FakeGPSJoystickPro/3.2"
 
         setContentView(R.layout.activity_main)
 
