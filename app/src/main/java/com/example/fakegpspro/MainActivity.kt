@@ -50,7 +50,7 @@ class MainActivity : Activity() {
     private val loop = object : Runnable {
         override fun run() {
             if (active) {
-                step(.1)
+                step(0.1)
                 sendMock()
                 refresh()
                 handler.postDelayed(this, 100)
@@ -61,13 +61,11 @@ class MainActivity : Activity() {
     override fun onCreate(b: Bundle?) {
         super.onCreate(b)
 
-        // OSMDroid configuration
         Configuration.getInstance().load(
             this,
             getSharedPreferences("osm", 0)
         )
 
-        // Proper app identification for OpenStreetMap tile requests
         Configuration.getInstance().userAgentValue =
             "FakeGPSJoystickPro/3.1"
 
@@ -113,7 +111,7 @@ class MainActivity : Activity() {
             jx = x
             jy = y
 
-            if (!auto && abs(x) + abs(y) > .05) {
+            if (!auto && abs(x) + abs(y) > 0.05) {
                 bearing =
                     (Math.toDegrees(
                         atan2(x.toDouble(), -y.toDouble())
@@ -122,7 +120,6 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.setPos).setOnClickListener {
-
             val a = findViewById<EditText>(R.id.lat)
                 .text.toString().toDoubleOrNull()
 
@@ -147,7 +144,6 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.add).setOnClickListener {
-
             val a = findViewById<EditText>(R.id.lat)
                 .text.toString().toDoubleOrNull()
 
@@ -160,7 +156,6 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.buildRoute).setOnClickListener {
-
             if (waypoints.isEmpty()) {
                 toast("Tambah waypoint dulu")
                 return@setOnClickListener
@@ -170,7 +165,6 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.start).setOnClickListener {
-
             if (route.isEmpty()) {
                 toast("BUILD ROUTE dulu")
                 return@setOnClickListener
@@ -179,7 +173,6 @@ class MainActivity : Activity() {
             auto = true
             active = true
             routeIndex = 0
-
             status.text = "AUTO ROAD"
 
             handler.removeCallbacks(loop)
@@ -187,10 +180,8 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.manual).setOnClickListener {
-
             auto = false
             active = true
-
             status.text = "MANUAL JOYSTICK"
 
             handler.removeCallbacks(loop)
@@ -198,7 +189,6 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.clear).setOnClickListener {
-
             waypoints.clear()
             route.clear()
 
@@ -215,7 +205,6 @@ class MainActivity : Activity() {
             line = null
 
             map.invalidate()
-
             routeInfo.text = "Route: 0"
         }
 
@@ -223,7 +212,6 @@ class MainActivity : Activity() {
     }
 
     private fun addWaypoint(p: P) {
-
         waypoints.add(p)
 
         val m = Marker(map)
@@ -233,27 +221,21 @@ class MainActivity : Activity() {
         map.overlays.add(m)
         markers.add(m)
 
-        routeInfo.text =
-            "Waypoints: ${waypoints.size}"
+        routeInfo.text = "Waypoints: ${waypoints.size}"
 
         map.invalidate()
     }
 
     private fun buildRoadRoute() {
-
         val all = mutableListOf<P>()
         var from = P(lat, lon)
 
         thread {
-
             try {
-
                 for (to in waypoints) {
-
                     val part = requestOsrm(from, to)
 
                     if (part.isNotEmpty()) {
-
                         if (all.isNotEmpty()) {
                             all.removeAt(all.lastIndex)
                         }
@@ -265,10 +247,8 @@ class MainActivity : Activity() {
                 }
 
                 runOnUiThread {
-
                     route.clear()
                     route.addAll(all)
-
                     routeIndex = 0
 
                     drawRoute()
@@ -276,12 +256,10 @@ class MainActivity : Activity() {
                     routeInfo.text =
                         "Road points: ${route.size}"
 
-                    status.text =
-                        "ROUTE READY"
+                    status.text = "ROUTE READY"
                 }
 
             } catch (e: Exception) {
-
                 runOnUiThread {
                     toast(
                         "Gagal mengambil rute: ${e.message}"
@@ -291,8 +269,6 @@ class MainActivity : Activity() {
         }
     }
 
-    // OSRM public demo endpoint.
-    // For production use, configure your own routing server.
     private fun requestOsrm(a: P, b: P): List<P> {
 
         val url = URL(
@@ -317,8 +293,7 @@ class MainActivity : Activity() {
         val root = JSONObject(text)
 
         val coords =
-            root
-                .getJSONArray("routes")
+            root.getJSONArray("routes")
                 .getJSONObject(0)
                 .getJSONObject("geometry")
                 .getJSONArray("coordinates")
@@ -326,7 +301,6 @@ class MainActivity : Activity() {
         val out = mutableListOf<P>()
 
         for (i in 0 until coords.length()) {
-
             val q = coords.getJSONArray(i)
 
             out.add(
@@ -341,12 +315,13 @@ class MainActivity : Activity() {
     }
 
     private fun drawRoute() {
-
         line?.let {
             map.overlays.remove(it)
         }
 
-        if (route.isEmpty()) return
+        if (route.isEmpty()) {
+            return
+        }
 
         val pl = Polyline()
 
@@ -359,7 +334,6 @@ class MainActivity : Activity() {
         pl.width = 9f
 
         map.overlays.add(pl)
-
         line = pl
 
         map.invalidate()
@@ -370,12 +344,9 @@ class MainActivity : Activity() {
         if (auto) {
 
             if (routeIndex >= route.size) {
-
                 active = false
                 auto = false
-
                 status.text = "RUTE SELESAI"
-
                 return
             }
 
@@ -411,23 +382,16 @@ class MainActivity : Activity() {
                     ) % 360
 
                 lat +=
-                    cos(
-                        Math.toRadians(bearing)
-                    ) *
-                    travel /
-                    111320.0
+                    cos(Math.toRadians(bearing)) *
+                            travel / 111320.0
 
                 lon +=
-                    sin(
-                        Math.toRadians(bearing)
-                    ) *
-                    travel /
-                    (
-                        111320.0 *
-                                cos(
-                                    Math.toRadians(lat)
-                                )
-                        )
+                    sin(Math.toRadians(bearing)) *
+                            travel /
+                            (
+                                111320.0 *
+                                        cos(Math.toRadians(lat))
+                            )
             }
 
         } else {
@@ -438,7 +402,99 @@ class MainActivity : Activity() {
                     jy.toDouble()
                 )
 
-            if (mag < .05) return
+            if (mag < 0.05) {
+                return
+            }
 
             val travel =
-                speed * 1000 / 360
+                speed * 1000 / 3600 * dt
+
+            val east =
+                jx / mag * travel
+
+            val north =
+                -jy / mag * travel
+
+            lat += north / 111320.0
+
+            lon +=
+                east /
+                        (
+                            111320.0 *
+                                    cos(Math.toRadians(lat))
+                        )
+        }
+    }
+
+    private fun sendMock() {
+        try {
+
+            val l =
+                Location(LocationManager.GPS_PROVIDER).apply {
+
+                    latitude = lat
+                    longitude = lon
+                    accuracy = 3f
+
+                    speed =
+                        (speed / 3.6).toFloat()
+
+                    bearing =
+                        this@MainActivity.bearing.toFloat()
+
+                    time =
+                        System.currentTimeMillis()
+
+                    elapsedRealtimeNanos =
+                        SystemClock.elapsedRealtimeNanos()
+                }
+
+            locationManager.setTestProviderLocation(
+                LocationManager.GPS_PROVIDER,
+                l
+            )
+
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun refresh() {
+
+        coords.text =
+            "Lat: %.6f   Lon: %.6f".format(
+                lat,
+                lon
+            )
+
+        if (auto) {
+            routeInfo.text =
+                "AUTO: ${
+                    routeIndex.coerceAtMost(route.size)
+                }/${route.size}"
+        }
+
+        map.controller.setCenter(
+            GeoPoint(lat, lon)
+        )
+
+        map.invalidate()
+    }
+
+    private fun toast(s: String) {
+        Toast.makeText(
+            this,
+            s,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        map.onPause()
+        super.onPause()
+    }
+}
