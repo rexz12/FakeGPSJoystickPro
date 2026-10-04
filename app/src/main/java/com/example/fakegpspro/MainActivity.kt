@@ -66,8 +66,8 @@ class MainActivity : Activity() {
             getSharedPreferences("osm", 0)
         )
 
-        Configuration.getInstance().userAgentValue =
-            "FakeGPSJoystickPro/3.2"
+        Configuration.getInstance().setUserAgentValue(
+            "FakeGPSJoystickPro/3.2")
 
         setContentView(R.layout.activity_main)
 
